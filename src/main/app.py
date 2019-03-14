@@ -3,8 +3,11 @@ import json
 import requests
 from flask import Flask, jsonify, make_response, request
 from flask_api import status
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 books_base_url = "https://www.googleapis.com/books/v1"
 #books_api_token = "AIzaSyCOeFB-k532HjyVfsYJK9pKKx9UGDoqq5g"
@@ -13,6 +16,7 @@ SEARCH_PARAM = "key_words"
 ID_PARAM = "id"
 
 @app.route("/v1/books")
+@cross_origin()
 def query_books():
     if (not (request.args.has_key(SEARCH_PARAM) or request.args.has_key(ID_PARAM))):
         return get_response({"message" : "Se debe ingresar algun parametro de busqueda valido!"}, status.HTTP_400_BAD_REQUEST)
