@@ -5,16 +5,16 @@ from flask import Flask, jsonify, make_response, request, send_file
 from flask_api import status
 from flask_cors import CORS, cross_origin
 
-app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+application = Flask(__name__)
+cors = CORS(application)
+application.config['CORS_HEADERS'] = 'Content-Type'
 
 books_base_url = "https://www.googleapis.com/books/v1/volumes"
 
 SEARCH_PARAM = "key_words"
 PARAMETER_MAP = { "start_index" : "startIndex", "max_results" : "maxResults" }
 
-@app.route("/v1/books")
+@application.route("/v1/books")
 @cross_origin()
 def query_books():
     try:
