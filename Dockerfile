@@ -21,4 +21,4 @@ ENV BOOKS_API_TOKEN AIzaSyCOeFB-k532HjyVfsYJK9pKKx9UGDoqq5g
 
 # Run app.py when the container launches
 #CMD ["python", "src/main/app.py"]
-ENTRYPOINT ["/usr/local/bin/gunicorn", "--log-config", "config/logging.conf", "-b", ":8000", "src.main.wsgi"]
+ENTRYPOINT ["/usr/local/bin/gunicorn", "-b", ":80", "src.main.wsgi"]
