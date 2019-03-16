@@ -20,4 +20,5 @@ EXPOSE 80
 ENV BOOKS_API_TOKEN AIzaSyCOeFB-k532HjyVfsYJK9pKKx9UGDoqq5g
 
 # Run app.py when the container launches
-CMD ["python", "src/main/app.py"]
+#CMD ["python", "src/main/app.py"]
+ENTRYPOINT ["/usr/local/bin/gunicorn", "-b", ":8000", "src.main.wsgi"]
