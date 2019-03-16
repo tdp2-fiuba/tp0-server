@@ -8,4 +8,6 @@
 
 	To search for books make a GET request to /v1/books?key_words=${kw} with the desired query key words. 
 
-	To retrieve a specific book's data make a GET request to /v1/books?id=${book_id} providing the specified book id. 
+	OPTIONAL PARAMETERS:
+		- start_index: return query results starting from the indicated index.
+		- max_results: maximum amount of results to be returned.
