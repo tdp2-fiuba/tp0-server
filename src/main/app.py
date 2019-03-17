@@ -45,11 +45,5 @@ def query_books():
     except Exception as e:
         return get_response({"message" : "Se produjo un error inesperado: {}".format(e.message)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-def get_sort_field(book):
-    try:
-        return book['volumeInfo']['title']
-    except KeyError:
-        return 0
-
 def get_response(request_response_obj, response_status):
     return make_response(json.dumps(request_response_obj), response_status)
