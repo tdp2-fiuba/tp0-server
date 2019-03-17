@@ -13,3 +13,4 @@ Try this app at: https://tp0-server.herokuapp.com.
 	OPTIONAL PARAMETERS:
 		- start_index: return query results starting from the indicated index.
 		- max_results: maximum amount of results to be returned.
+		- sorted: if set to true, this will ensure the resulting book list is ordered by title alphabetically.
