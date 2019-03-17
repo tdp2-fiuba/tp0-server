@@ -25,15 +25,25 @@ def query_books():
 
         for param, value in request.args.items():
             if PARAMETER_MAP.has_key(param):
-                query_param += "&{}={}".format(PARAMETER_MAP[param], value);
+                query_param += "&{}={}".format(PARAMETER_MAP[param], value)
 
-        response = requests.get(books_base_url + "?{}".format(query_param), headers = {"key" : os.environ['BOOKS_API_TOKEN']});
+        response = requests.get(books_base_url + "?{}".format(query_param), headers = {"key" : os.environ['BOOKS_API_TOKEN']})
         book_list = response.json()["items"] if (response.json()["totalItems"] > 0) else []
+
+        if (request.args.has_key("sorted") and request.args["sorted"]):
+            book_list = sorted(book_list, key=get_sort_field)
+
         return get_response({"items" : book_list}, status.HTTP_200_OK)
     except ValueError as e:
         return get_response({"message" : "La busqueda que intenta realizar no es valida! : {}".format(e.message)}, status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return get_response({"message" : "Se produjo un error inesperado: {}".format(e.message)}, status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def get_sort_field(book):
+    try:
+        return book['volumeInfo']['title']
+    except KeyError:
+        return 0
 
 def get_response(request_response_obj, response_status):
     return make_response(json.dumps(request_response_obj), response_status)
