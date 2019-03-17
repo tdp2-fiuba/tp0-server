@@ -12,7 +12,9 @@ application.config['CORS_HEADERS'] = 'Content-Type'
 books_base_url = "https://www.googleapis.com/books/v1/volumes"
 
 SEARCH_PARAM = "key_words"
-PARAMETER_MAP = { "start_index" : "startIndex", "max_results" : "maxResults" }
+PARAM_SORT = "sorted"
+PARAM_START_INDEX = "start_index"
+PARAM_MAX_RESULTS = "max_results"
 
 @application.route("/v1/books")
 @cross_origin()
@@ -23,17 +25,21 @@ def query_books():
 
         query_param = "q={}".format(request.args.get(SEARCH_PARAM))
 
-        for param, value in request.args.items():
-            if PARAMETER_MAP.has_key(param):
-                query_param += "&{}={}".format(PARAMETER_MAP[param], value)
-
         response = requests.get(books_base_url + "?{}".format(query_param), headers = {"key" : os.environ['BOOKS_API_TOKEN']})
         book_list = response.json()["items"] if (response.json()["totalItems"] > 0) else []
+        start_index = 0 if (not request.args.has_key(PARAM_START_INDEX)) else int(request.args[PARAM_START_INDEX])
+        print(len(book_list))
 
-        if (request.args.has_key("sorted") and request.args["sorted"]):
-            book_list = sorted(book_list, key=get_sort_field)
+        if (start_index >= len(book_list)):
+            return get_response({"items" : []}, status.HTTP_200_OK)
 
-        return get_response({"items" : book_list}, status.HTTP_200_OK)
+        if (request.args.has_key(PARAM_SORT) and request.args[PARAM_SORT]):
+            book_list = sorted(book_list, key=lambda book: book["volumeInfo"]["title"])
+
+        new_end_index = len(book_list) if ((not request.args.has_key(PARAM_MAX_RESULTS)) or len(book_list) < int(request.args[PARAM_MAX_RESULTS])) else (start_index + int(request.args[PARAM_MAX_RESULTS]))
+        new_end_index = len(book_list) if (new_end_index > len(book_list)) else new_end_index
+        
+        return get_response({"items" : book_list[start_index : new_end_index]}, status.HTTP_200_OK)
     except ValueError as e:
         return get_response({"message" : "La busqueda que intenta realizar no es valida! : {}".format(e.message)}, status.HTTP_400_BAD_REQUEST)
     except Exception as e:
