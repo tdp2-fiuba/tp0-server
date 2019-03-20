@@ -59,3 +59,7 @@ def query_books():
 
 def get_response(request_response_obj, response_status):
     return make_response(json.dumps(request_response_obj), response_status)
+
+
+#if __name__ == "__main__":
+#    application.run('0.0.0.0', 80)
